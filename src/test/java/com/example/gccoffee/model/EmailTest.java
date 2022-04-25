@@ -23,4 +23,12 @@ class EmailTest {
         var email = new Email("kim@gmail.com");
         assertTrue(email.getAddress().equals("kim@gmail.com"));
     }
+
+    @Test
+    @DisplayName("같은 이메일이면 동일한지 테스트")
+    void testEqualEmail() {
+        var email = new Email("kim@gmail.com");
+        var email2 = new Email("kim@gmail.com");
+        assertEquals(email,email2);
+    }
 }
