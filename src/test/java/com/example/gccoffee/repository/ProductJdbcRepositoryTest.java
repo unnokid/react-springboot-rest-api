@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.wix.mysql.EmbeddedMysql.anEmbeddedMysql;
@@ -25,6 +26,7 @@ import static org.hamcrest.Matchers.is;
 //resources안에있는 application-test.yaml를 가르킴
 @ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ProductJdbcRepositoryTest {
 
     static EmbeddedMysql embeddedMysql;
@@ -50,6 +52,8 @@ class ProductJdbcRepositoryTest {
     @Autowired
     ProductRepository productJdbcRepository;
 
+    //하나의 인스턴스를 계속사용하도록 static 선언하기
+    //or @TestInstance(TestInstance.Lifecycle.PER_CLASS)를 선언해서 클래스로 라이프싸이클잡기
     private final Product newProduct = new Product(UUID.randomUUID(), "new-product", Category.COFFEE_BEAN_PACKAGE, 1000L);
 
     @Test
@@ -59,5 +63,32 @@ class ProductJdbcRepositoryTest {
         productJdbcRepository.insert(newProduct);
         var all = productJdbcRepository.findAll();
         assertThat(all.isEmpty(), is(false));
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("상품을 이름으로 조회할 수 있음")
+    void testFindByName(){
+        var product = productJdbcRepository.findByName(newProduct.getProductName());
+
+        assertThat(product.isEmpty(), is(false));
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("상품을 아이디로 조회할 수 있음")
+    void testFindById(){
+        var product = productJdbcRepository.findById(newProduct.getProductId());
+
+        assertThat(product.isEmpty(), is(false));
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("상품을 카테고리로 조회할 수 있음")
+    void testFindByCategory(){
+        var product = productJdbcRepository.findByCategory(newProduct.getCategory());
+
+        assertThat(product.isEmpty(), is(false));
     }
 }
