@@ -18,6 +18,7 @@ import static com.wix.mysql.config.MysqldConfig.aMysqldConfig;
 import static com.wix.mysql.distribution.Version.v5_7_latest;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.samePropertyValuesAs;
 
 //springBootApplication을 찾아서
 //안에있는 SpringBootConfiguration을 찾아감
@@ -90,5 +91,25 @@ class ProductJdbcRepositoryTest {
         var product = productJdbcRepository.findByCategory(newProduct.getCategory());
 
         assertThat(product.isEmpty(), is(false));
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("상품을 수정할 수 있음")
+    void testUpdate(){
+        newProduct.setProductName("update-product");
+        productJdbcRepository.update(newProduct);
+        var product = productJdbcRepository.findById(newProduct.getProductId());
+        assertThat(product.isEmpty(), is(false));
+        assertThat(product.get(), samePropertyValuesAs(newProduct));
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("상품을 전체 삭제할 수 있음")
+    void testDeleteAll(){
+        productJdbcRepository.deleteAll();
+        var product = productJdbcRepository.findAll();
+        assertThat(product.isEmpty(), is(true));
     }
 }
