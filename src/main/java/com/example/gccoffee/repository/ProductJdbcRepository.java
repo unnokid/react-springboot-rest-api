@@ -45,7 +45,7 @@ public class ProductJdbcRepository implements ProductRepository {
     public Optional<Product> findById(UUID productId) {
         try{
             return Optional.ofNullable(
-                    jdbcTemplate.queryForObject("select * from products where product_id = UUID_To_BIN(:productId)",
+                    jdbcTemplate.queryForObject("select * from products where product_id = UNHEX(REPLACE(:productId, '-', ''))",
                             Collections.singletonMap("productId",productId.toString().getBytes()),
                             productRowMapper
                     ));
@@ -58,7 +58,7 @@ public class ProductJdbcRepository implements ProductRepository {
     public Optional<Product> findByName(String productName) {
         try{
             return Optional.ofNullable(
-                    jdbcTemplate.queryForObject("select * from products where product_name = UUID_To_BIN(:productName)",
+                    jdbcTemplate.queryForObject("select * from products where product_name = :productName",
                             Collections.singletonMap("productName",productName),
                             productRowMapper
                     ));
