@@ -1,0 +1,6 @@
+#여기서 설정하지않으면 기본적인 H2로 가버림
+spring:
+  datasource:
+    url: jdbc:mysql://localhost/order_mgmt
+    username: root
+    password: root
